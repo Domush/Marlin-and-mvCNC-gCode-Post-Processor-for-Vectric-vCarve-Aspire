@@ -8,22 +8,26 @@
 +
 + Who      When       What
 + ======== ========== ===========================
-+ EdwardW   13/01/2020
++ EdwardW   01/13/2020
 +                      Added status messages (M117)
 +                      Added 0:0:1mm Coord Reset (G92 X0 Y0 Z1)
 +                      Added tool change support using M0
 +                      Enabled Arc movements (G2/G3)
 +                      Added ending presentation
-+ EdwardW   28/02/2020
++ EdwardW   02/28/2020
 +                      Increased non-cut movement speed
 +                      Added G54 (CNC) coordinate support
++ EdwardW   10/25/2021
++                      Added router control (M3/M5)
+                       Switch to G53 (Machine Coords) during tool change
++                      Added router return for bit change
 +================================================
 
-POST_NAME = "Marlin M0 G54 Arc (in) (*.gcode)"
+POST_NAME = "Marlin M0 G54 Arc (mm) (*.gcode)"
 
 FILE_EXTENSION = "gcode"
 
-UNITS = "INCHES"
+UNITS = "MM"
 
 +------------------------------------------------
 +    Line terminating characters
@@ -36,7 +40,7 @@ LINE_ENDING = "[13][10]"
 +------------------------------------------------
 
 LINE_NUMBER_START     = 0
-LINE_NUMBER_INCREMENT = 10
+LINE_NUMBER_INCREMENT = 1
 LINE_NUMBER_MAXIMUM = 999999
 
 +================================================
@@ -78,11 +82,12 @@ begin HEADER
 "; Generated [DATE] [TIME]"
 "G90"
 "G21"
-"M0 Load [TOOLNAME], then Pos@ 0:0:0.1in"
 "G54"
-"G92 X0 Y0 Z0.1"
+"M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
+"G92 X0 Y0 Z1"
 "G0 Z[SAFEZ] F800"
 "G0 [XH] [YH] [F]"
+"M3"
 "; Tool [T]: [TOOLNAME]"
 "; Path: [TOOLPATH_NAME] [PATHNAME]"
 "; [TOOLPATH_NOTES]"
@@ -165,7 +170,10 @@ begin TOOLCHANGE
 
 "; Tool change:"
 "; Tool [T]: [TOOLNAME]"
-"M0 Load [TOOLNAME], then Pos@ 0:0:0.1in"
+"M5"
+"G53"
+"G0 X20 Y20 Z40"
+"M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
 
 +---------------------------------------------------
 +  Commands output for toolpath changes
@@ -173,11 +181,14 @@ begin TOOLCHANGE
 
 begin NEW_SEGMENT
 
+"; Path: [TOOLPATH_NAME] [PATHNAME]"
+"; [TOOLPATH_NOTES]"
 "M117 Resuming [TOOLPATH_NAME] using [TOOLNAME]"
 "G54"
-"G92 Z0.1"
+"G92 Z1"
 "G0 Z[SAFEZ] F800"
 "G0 X0 Y0"
+"M3"
 
 +---------------------------------------------------
 +  Commands output at the end of the file
@@ -186,5 +197,6 @@ begin NEW_SEGMENT
 begin FOOTER
 
 "G0 Z[SAFEZ] F800"
+"M5"
 "G0 X0 Y0 F3000"
-"M117 Routing complete <3"
+"M117 Routing complete."

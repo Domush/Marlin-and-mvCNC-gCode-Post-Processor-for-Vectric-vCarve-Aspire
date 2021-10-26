@@ -10,7 +10,7 @@
 + ======== ========== ===========================
 + EdwardW   01/13/2020
 +                      Added status messages (M117)
-+                      Added 0:0:1mm Coord Reset (G92 X0 Y0 Z1)
++                      Added 0:0:0.1in Coord Reset (G92 X0 Y0 Z0.1)
 +                      Added tool change support using M0
 +                      Enabled Arc movements (G2/G3)
 +                      Added ending presentation
@@ -19,14 +19,15 @@
 +                      Added G54 (CNC) coordinate support
 + EdwardW   10/25/2021
 +                      Added router control (M3/M5)
+                       Switch to G53 (Machine Coords) during tool change
 +                      Added router return for bit change
 +================================================
 
-POST_NAME = "Marlin M0 G54 Arc (mm) (*.gcode)"
+POST_NAME = "Marlin M0 G54 Arc (in) (*.gcode)"
 
 FILE_EXTENSION = "gcode"
 
-UNITS = "MM"
+UNITS = "INCHES"
 
 +------------------------------------------------
 +    Line terminating characters
@@ -82,8 +83,8 @@ begin HEADER
 "G90"
 "G21"
 "G54"
-"M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
-"G92 X0 Y0 Z1"
+"M0 Load [TOOLNAME], then Pos@ 0:0:0.1in"
+"G92 X0 Y0 Z0.1"
 "G0 Z[SAFEZ] F800"
 "G0 [XH] [YH] [F]"
 "M3"
@@ -172,7 +173,7 @@ begin TOOLCHANGE
 "M5"
 "G53"
 "G0 X20 Y20 Z40"
-"M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
+"M0 Load [TOOLNAME], then Pos@ 0:0:0.1in"
 
 +---------------------------------------------------
 +  Commands output for toolpath changes
@@ -184,7 +185,7 @@ begin NEW_SEGMENT
 "; [TOOLPATH_NOTES]"
 "M117 Resuming [TOOLPATH_NAME] using [TOOLNAME]"
 "G54"
-"G92 Z1"
+"G92 Z0.1"
 "G0 Z[SAFEZ] F800"
 "G0 X0 Y0"
 "M3"
