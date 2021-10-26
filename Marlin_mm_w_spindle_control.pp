@@ -19,7 +19,7 @@
 +                      Added G54 (CNC) coordinate support
 + EdwardW   10/25/2021
 +                      Added router control (M3/M5)
-                       Switch to G53 (Machine Coords) during tool change
++                      Switch to G53 (Machine Coords) during tool change
 +                      Added router return for bit change
 +================================================
 
@@ -83,9 +83,10 @@ begin HEADER
 "G90"
 "G21"
 "G54"
+"M117 Please install [TOOLNAME]"
 "M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
-"G92 X0 Y0 Z1"
-"G0 Z[SAFEZ] F800"
+"G92 X0 Y0 Z1 [F]"
+"G0 Z[SAFEZ] [F]"
 "G0 [XH] [YH] [F]"
 "M3"
 "; Tool [T]: [TOOLNAME]"
@@ -144,7 +145,7 @@ begin FIRST_CW_ARC_MOVE
 
 begin CW_ARC_MOVE
 
-"G2 [X] [Y] [I] [J]"
+"G2 [X] [Y] [I] [J] [FC]"
 
 +---------------------------------------------------
 +  Commands output for the first counterclockwise arc move
@@ -160,7 +161,7 @@ begin FIRST_CCW_ARC_MOVE
 
 begin CCW_ARC_MOVE
 
-"G3 [X] [Y] [I] [J]"
+"G3 [X] [Y] [I] [J] [FC]"
 
 +---------------------------------------------------
 +  Commands output for tool changes
@@ -172,7 +173,8 @@ begin TOOLCHANGE
 "; Tool [T]: [TOOLNAME]"
 "M5"
 "G53"
-"G0 X20 Y20 Z40"
+"G0 X20 Y20 Z40 [F]"
+"M117 Please install [TOOLNAME]"
 "M0 Load [TOOLNAME], then Pos@ 0:0:1mm"
 
 +---------------------------------------------------
@@ -186,8 +188,8 @@ begin NEW_SEGMENT
 "M117 Resuming [TOOLPATH_NAME] using [TOOLNAME]"
 "G54"
 "G92 Z1"
-"G0 Z[SAFEZ] F800"
-"G0 X0 Y0"
+"G0 Z[SAFEZ] [F]"
+"G0 X0 Y0 [F]"
 "M3"
 
 +---------------------------------------------------
@@ -196,7 +198,8 @@ begin NEW_SEGMENT
 
 begin FOOTER
 
-"G0 Z[SAFEZ] F800"
+"M117 Returning home"
+"G0 Z[SAFEZ] [F]"
 "M5"
-"G0 X0 Y0 F3000"
+"G0 X0 Y0 [F]"
 "M117 Routing complete."
