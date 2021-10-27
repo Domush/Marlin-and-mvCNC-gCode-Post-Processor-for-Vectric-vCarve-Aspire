@@ -33,7 +33,7 @@ UNITS = "MM"
 SPINDLE_SPEED_RANGE = 1 100 10000 27500
 
 + Replace all () with {} to avoid gCode interpretation errors
-SUBSTITUTE = "({)} "
+SUBSTITUTE = "({)}"
 
 +---------------------------------------------------------------------------
 +    Line terminating characters
