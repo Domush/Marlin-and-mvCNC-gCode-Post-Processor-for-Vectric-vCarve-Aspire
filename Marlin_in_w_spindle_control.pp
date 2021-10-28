@@ -33,7 +33,7 @@ UNITS = "INCHES"
 SPINDLE_SPEED_RANGE = 1 100 10000 27500
 
 + Replace all () with {} to avoid gCode interpretation errors
-SUBSTITUTE = "({)}"
+SUBSTITUTE = "(<)>"
 
 +---------------------------------------------------------------------------
 +    Line terminating characters
@@ -50,7 +50,7 @@ LINE_NUMBER_MAXIMUM = 999999
 
 +===========================================================================
 +
-+    Formating for variables
++    Formatting for variables
 +
 +===========================================================================
 
@@ -67,6 +67,9 @@ VAR ARC_CENTRE_J_INC_POSITION = [J|A|J|1.4]
 VAR X_HOME_POSITION = [XH|A|X|1.4]
 VAR Y_HOME_POSITION = [YH|A|Y|1.4]
 VAR Z_HOME_POSITION = [ZH|A|Z|1.4]
+VAR X_LENGTH = [XLENGTH|A|W:|1.1]
+VAR Y_LENGTH = [YLENGTH|A|H:|1.1]
+VAR Z_LENGTH = [ZLENGTH|A|Z:|1.2]
 
 +===========================================================================
 +
@@ -82,22 +85,22 @@ begin HEADER
 
 "; [TP_FILENAME]"
 "; Generated [DATE] [TIME]"
-"; Material size: [XLENGTH]x[YLENGTH]x[ZLENGTH]"
-"; Safe Z height: [SAFEZ]"
+"; Material size: [XLENGTH] [YLENGTH] [ZLENGTH] [UNITS]"
+"; Safe Z height: [SAFEZ] in"
 "; Tools: [TOOLS_USED]"
 "; Notes: [FILE_NOTES]"
 "G90"
 "G20"
-"M117 Material dimensions: [XLENGTH]x[YLENGTH]x[ZLENGTH]"
-"M0 Confirm [XLENGTH]x[YLENGTH]x[ZLENGTH] material"
-"M117 Load [TOOLNAME] [TDIA] ([S]%RPM)"
-"M0 Confirm [TOOLNAME] [TDIA] ([S]%RPM) is loaded"
+"M117 [XLENGTH] [YLENGTH] [ZLENGTH] [UNITS] piece needed"
+"M0 [XLENGTH] [YLENGTH] [ZLENGTH] mounted"
+"M117 Install [TOOLNAME] @ [S]%"
+"M0 [TOOLNAME] @ [S]% is loaded"
 "G54"
 "G0 Z[SAFEZ] [F]"
 "G0 [XH] [YH] [F]"
 "M3 [S]"
 "; Tool [T]: [TOOLNAME]"
-"; Path: [TOOLPATH_NAME] [PATHNAME]"
+"; Path: [TOOLPATH_NAME]"
 "; [TOOLPATH_NOTES]"
 
 +---------------------------------------------------------------------------
@@ -147,7 +150,7 @@ begin NEW_SEGMENT
 
 "; Path: [TOOLPATH_NAME] [PATHNAME]"
 "; [TOOLPATH_NOTES]"
-"M117 [TOOLPATH_NAME] @ [S]RPM"
+"M117 [TOOLPATH_NAME] @ [S]%"
 "M3 [S]"
 
 +---------------------------------------------------------------------------
@@ -159,6 +162,6 @@ begin FOOTER
 "M5"
 "M117 Returning home"
 "G53"
-"G0 Z3 [F]"
-"G0 X0 Y0 [F]"
+"G0 [ZH] [F]"
+"G0 [XH] [YH] [F]"
 "M117 Routing complete."
