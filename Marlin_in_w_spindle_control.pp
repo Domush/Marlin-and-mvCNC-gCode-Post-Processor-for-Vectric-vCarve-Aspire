@@ -159,7 +159,6 @@ begin FOOTER
 
 "M5"
 "M117 Returning home"
-"G53"
 "G0 [ZH] [F]"
 "G0 [XH] [YH] [F]"
 "M117 Routing complete."
