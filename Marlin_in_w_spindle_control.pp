@@ -91,12 +91,12 @@ begin HEADER
 "; Notes: [FILE_NOTES]"
 "G90"
 "G20"
-"M117 [XLENGTH] [YLENGTH] [ZLENGTH] [UNITS] w/#[T] [TOOLNAME] @ [S]%"
+"M117 [XLENGTH] [YLENGTH] [ZLENGTH] [UNITS] w/#[T] [TOOLNAME]"
 "M0 Continue when ready"
 "G54"
 "G0 Z[SAFEZ] [F]"
 "G0 [XH] [YH] [F]"
-"M3 [S]"
+"M3 S100"
 "; Tool [T]: [TOOLNAME]"
 "; Path: [TOOLPATH_NAME]"
 "; [TOOLPATH_NOTES]"
@@ -149,7 +149,7 @@ begin NEW_SEGMENT
 "; Path: [TOOLPATH_NAME] [PATHNAME]"
 "; [TOOLPATH_NOTES]"
 "M117 [TOOLPATH_NAME] @ [S]%"
-"M3 [S]"
+"M3 S100"
 
 +---------------------------------------------------------------------------
 +  Commands output at the end of the file
