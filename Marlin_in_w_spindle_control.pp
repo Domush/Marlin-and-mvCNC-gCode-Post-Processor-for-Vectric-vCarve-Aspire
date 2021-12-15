@@ -40,7 +40,7 @@ UNITS = "inches"
 SPINDLE_SPEED_RANGE = 1 100 10000 27500
 
 + Replace all <> with () to avoid gCode interpretation errors
-SUBSTITUTE = "<(>)"
+SUBSTITUTE = "([91])[93]"
 
 + Plunge moves to Plunge (Z2) height are rapid moves
 RAPID_PLUNGE_TO_STARTZ = "YES"
