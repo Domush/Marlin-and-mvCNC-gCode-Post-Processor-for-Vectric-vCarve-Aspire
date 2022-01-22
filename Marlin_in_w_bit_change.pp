@@ -16,7 +16,6 @@
 |                      Added G54 (CNC) coordinate support
 | EdwardW   10/26/2021
 |                      Added router control (M3/M5)
-|                      Removed tool change support because its unworkable
 | EdwardW   12/14/2021
 |                      Added helical-arc support
 |                      Changed to unix line endings
@@ -25,13 +24,18 @@
 |                      Now uses machine default rapid move speed
 |                      Disabled PLUNGE_RATE section to avoid slowdowns
 |                      Comments now report carved Z depth, not material Z
+| EdwardW   1/22/2022
+|                      Added manual bit change support
+|                      !!Be sure to edit bit change defaults for Zero Probe!
+|                      Zero Probe default Z-height: 6.5mm
+|                      Fixed metric file to correctly set to metric
 +===========================================================================
 
-POST_NAME = "Marlin M0 G54 Arc (mm) (*.gcode)"
+POST_NAME = "Marlin G54 Bit Change (in) (*.gcode)"
 
 FILE_EXTENSION = "gcode"
 
-UNITS = "mm"
+UNITS = "inches"
 
 +---------------------------------------------------------------------------
 |    Configurable items based on your CNC
@@ -71,22 +75,22 @@ VAR LINE_NUMBER = [N|A|N|1.0]
 VAR SPINDLE_SPEED = [S|A|S|1.0]
 VAR CUT_RATE = [FC|C|F|1.0]
 VAR PLUNGE_RATE = [FP|C|F|1.0]
-VAR X_POSITION = [X|C| X|1.3]
-VAR Y_POSITION = [Y|C| Y|1.3]
-VAR Z_POSITION = [Z|C| Z|1.3]
-VAR ARC_CENTRE_I_INC_POSITION = [I|A| I|1.3]
-VAR ARC_CENTRE_J_INC_POSITION = [J|A| J|1.3]
-VAR X_HOME_POSITION = [XH|A| X|1.3]
-VAR Y_HOME_POSITION = [YH|A| Y|1.3]
-VAR Z_HOME_POSITION = [ZH|A| Z|1.3]
-+ VAR X_LENGTH = [XLENGTH|A|W:|1.0]
-+ VAR Y_LENGTH = [YLENGTH|A|H:|1.0]
-+ VAR Z_LENGTH = [ZLENGTH|A|Z:|1.0]
-VAR X_LENGTH = [XLENGTH|A||1.0]
-VAR Y_LENGTH = [YLENGTH|A||1.0]
-VAR Z_LENGTH = [ZLENGTH|A||1.0]
-VAR Z_MIN = [ZMIN|A||1.0]
-VAR SAFE_Z_HEIGHT = [SAFEZ|A||1.3]
+VAR X_POSITION = [X|C| X|1.4]
+VAR Y_POSITION = [Y|C| Y|1.4]
+VAR Z_POSITION = [Z|C| Z|1.4]
+VAR ARC_CENTRE_I_INC_POSITION = [I|A| I|1.4]
+VAR ARC_CENTRE_J_INC_POSITION = [J|A| J|1.4]
+VAR X_HOME_POSITION = [XH|A| X|1.4]
+VAR Y_HOME_POSITION = [YH|A| Y|1.4]
+VAR Z_HOME_POSITION = [ZH|A| Z|1.4]
++ VAR X_LENGTH = [XLENGTH|A|W:|1.1]
++ VAR Y_LENGTH = [YLENGTH|A|H:|1.1]
++ VAR Z_LENGTH = [ZLENGTH|A|Z:|1.2]
+VAR X_LENGTH = [XLENGTH|A||1.1]
+VAR Y_LENGTH = [YLENGTH|A||1.1]
+VAR Z_LENGTH = [ZLENGTH|A||1.2]
+VAR Z_MIN = [ZMIN|A||1.2]
+VAR SAFE_Z_HEIGHT = [SAFEZ|A||1.4]
 VAR DWELL_TIME = [DWELL|A|S|1.2]
 
 
@@ -102,14 +106,14 @@ VAR DWELL_TIME = [DWELL|A|S|1.2]
 begin HEADER
 
 "; [TP_FILENAME]"
-"; Material size: [YLENGTH] x [XLENGTH] x [ZMIN]mm"
+"; Material size: [YLENGTH] x [XLENGTH] x [ZMIN][34]"
 "; Tools: [TOOLS_USED]"
 "; Paths: [TOOLPATHS_OUTPUT]"
-"; Safe Z: [SAFEZ]mm"
+"; Safe Z: [SAFEZ][34]"
 "; Generated on [DATE] [TIME] by [PRODUCT]"
 "G90"
-"G21"
-"M117 [YLENGTH]x[XLENGTH]x[ZMIN]mm  Bit #[T]"
+"G20"
+"M117 [YLENGTH][34]x[XLENGTH][34]x[ZMIN][34]  Bit #[T]"
 "M0 Load [TOOLNAME]"
 "G54"
 "G0 Z[SAFEZ]"
@@ -155,14 +159,14 @@ begin CCW_ARC_MOVE
 "G3 [X][Y][I][J] [FC]"
 
 +---------------------------------------------------
-+  Clockwise helical-arc move
+|  Clockwise helical-arc move
 +---------------------------------------------------
 begin CW_HELICAL_ARC_MOVE
 
 "G2 [X][Y][Z][I][J] [FC]"
 
 +---------------------------------------------------
-+  Counterclockwise helical-arc move
+|  Counterclockwise helical-arc move
 +---------------------------------------------------
 begin CCW_HELICAL_ARC_MOVE
 
@@ -196,6 +200,7 @@ begin TOOLCHANGE
 "M5"
 "M117 Change Bit: #[T]"
 
+"G21"
 "G53 G0 Z100"
 "G53 G0 X0 Y200"
 "M0 Bit: [TOOLNAME]"
@@ -212,10 +217,9 @@ begin TOOLCHANGE
 "G0 Z10"
 "M0 Remove probe"
 "G90"
+"G20"
 "G0 Z[SAFEZ]"
 "G0 [XH][YH]"
-
-
 
 +---------------------------------------------
 +  Dwell (momentary pause)
