@@ -155,14 +155,14 @@ begin CCW_ARC_MOVE
 "G3 [X][Y][I][J] [FC]"
 
 +---------------------------------------------------
-+  Clockwise helical-arc move
+|  Clockwise helical-arc move
 +---------------------------------------------------
 begin CW_HELICAL_ARC_MOVE
 
 "G2 [X][Y][Z][I][J] [FC]"
 
 +---------------------------------------------------
-+  Counterclockwise helical-arc move
+|  Counterclockwise helical-arc move
 +---------------------------------------------------
 begin CCW_HELICAL_ARC_MOVE
 
@@ -182,6 +182,40 @@ begin NEW_SEGMENT
 
 + Overriding to 100% since I have no VFD. Otherwise use M3 [S]
 "M3 S100"
+
++---------------------------------------------------------------------------
+|  Change bits (manually)
++---------------------------------------------------------------------------
+begin TOOLCHANGE
+
+";==========================================================================="
+";"
+";                       Tool change: #[T] : [TOOLNAME]"
+";                       [TOOL_NOTES]"
+";==========================================================================="
+"M5"
+"M117 Change Bit: #[T]"
+
+"G21"
+"G53 G0 Z100"
+"G53 G0 X0 Y200"
+"M0 Bit: [TOOLNAME]"
+"G0 Z80"
++ Set below XY to position to probe your Zero Plate (in mm)
+"G0 X20 Y20"
+"M0 Connect probe"
+"G91"
+"G38.2 Z-40 F200"
+"G0 Z3"
+"G38.2 Z-6 F100"
++ Set below Z to height of your Zero Plate (in mm)
+"G92 Z6.5"
+"G0 Z10"
+"M0 Remove probe"
+"G90"
+"G20"
+"G0 Z[SAFEZ]"
+"G0 [XH][YH]"
 
 +---------------------------------------------
 +  Dwell (momentary pause)
