@@ -16,6 +16,7 @@
 |                      Added G54 (CNC) coordinate support
 | EdwardW   10/26/2021
 |                      Added router control (M3/M5)
+|                      Removed tool change support because its unworkable
 | EdwardW   12/14/2021
 |                      Added helical-arc support
 |                      Changed to unix line endings
@@ -31,11 +32,11 @@
 |                      Fixed metric file to correctly set to metric
 +===========================================================================
 
-POST_NAME = "Marlin G54 Bit Change (in) (*.gcode)"
+POST_NAME = "Marlin w/Bit Change (mm) (*.gcode)"
 
 FILE_EXTENSION = "gcode"
 
-UNITS = "inches"
+UNITS = "mm"
 
 +---------------------------------------------------------------------------
 |    Configurable items based on your CNC
@@ -43,7 +44,7 @@ UNITS = "inches"
 + Use 1-100 (%) for spindle speeds instead of true speeds of 10000-27500 (rpm)
 SPINDLE_SPEED_RANGE = 1 100 10000 27500
 
-+ Replace all <> with () to avoid gCode interpretation errors
++ Replace all () with <> to avoid gCode interpretation errors
 SUBSTITUTE = "([91])[93]"
 
 + Plunge moves to Plunge (Z2) height are rapid moves
@@ -75,22 +76,22 @@ VAR LINE_NUMBER = [N|A|N|1.0]
 VAR SPINDLE_SPEED = [S|A|S|1.0]
 VAR CUT_RATE = [FC|C|F|1.0]
 VAR PLUNGE_RATE = [FP|C|F|1.0]
-VAR X_POSITION = [X|C| X|1.4]
-VAR Y_POSITION = [Y|C| Y|1.4]
-VAR Z_POSITION = [Z|C| Z|1.4]
-VAR ARC_CENTRE_I_INC_POSITION = [I|A| I|1.4]
-VAR ARC_CENTRE_J_INC_POSITION = [J|A| J|1.4]
-VAR X_HOME_POSITION = [XH|A| X|1.4]
-VAR Y_HOME_POSITION = [YH|A| Y|1.4]
-VAR Z_HOME_POSITION = [ZH|A| Z|1.4]
-+ VAR X_LENGTH = [XLENGTH|A|W:|1.1]
-+ VAR Y_LENGTH = [YLENGTH|A|H:|1.1]
-+ VAR Z_LENGTH = [ZLENGTH|A|Z:|1.2]
-VAR X_LENGTH = [XLENGTH|A||1.1]
-VAR Y_LENGTH = [YLENGTH|A||1.1]
-VAR Z_LENGTH = [ZLENGTH|A||1.2]
-VAR Z_MIN = [ZMIN|A||1.2]
-VAR SAFE_Z_HEIGHT = [SAFEZ|A||1.4]
+VAR X_POSITION = [X|C| X|1.3]
+VAR Y_POSITION = [Y|C| Y|1.3]
+VAR Z_POSITION = [Z|C| Z|1.3]
+VAR ARC_CENTRE_I_INC_POSITION = [I|A| I|1.3]
+VAR ARC_CENTRE_J_INC_POSITION = [J|A| J|1.3]
+VAR X_HOME_POSITION = [XH|A| X|1.3]
+VAR Y_HOME_POSITION = [YH|A| Y|1.3]
+VAR Z_HOME_POSITION = [ZH|A| Z|1.3]
++ VAR X_LENGTH = [XLENGTH|A|W:|1.0]
++ VAR Y_LENGTH = [YLENGTH|A|H:|1.0]
++ VAR Z_LENGTH = [ZLENGTH|A|Z:|1.0]
+VAR X_LENGTH = [XLENGTH|A||1.0]
+VAR Y_LENGTH = [YLENGTH|A||1.0]
+VAR Z_LENGTH = [ZLENGTH|A||1.0]
+VAR Z_MIN = [ZMIN|A||1.0]
+VAR SAFE_Z_HEIGHT = [SAFEZ|A||1.3]
 VAR DWELL_TIME = [DWELL|A|S|1.2]
 
 
@@ -106,17 +107,18 @@ VAR DWELL_TIME = [DWELL|A|S|1.2]
 begin HEADER
 
 "; [TP_FILENAME]"
-"; Material size: [YLENGTH] x [XLENGTH] x [ZMIN][34]"
+"; Material size: [YLENGTH] x [XLENGTH] x [ZMIN]mm"
 "; Tools: [TOOLS_USED]"
 "; Paths: [TOOLPATHS_OUTPUT]"
-"; Safe Z: [SAFEZ][34]"
+"; Safe Z: [SAFEZ]mm"
 "; Generated on [DATE] [TIME] by [PRODUCT]"
 "G90"
-"G20"
-"M117 [YLENGTH][34]x[XLENGTH][34]x[ZMIN][34]  Bit #[T]"
+"G21"
+"M117 [YLENGTH]x[XLENGTH]x[ZMIN]mm  Bit #[T]"
+"M117 Load [TOOLNAME]"
 "M0 Load [TOOLNAME]"
 "G54"
-"G0 Z[SAFEZ]"
+"G0 [ZH]"
 "G0 [XH][YH]"
 + Manually set spindle to 100% since I have no VFD. Otherwise use: M3 [S]
 "M3 S100"
@@ -164,14 +166,14 @@ begin CCW_ARC_MOVE
 "G3 [X][Y][I][J] [FC]"
 
 +---------------------------------------------------
-|  Clockwise helical-arc move
++  Clockwise helical-arc move
 +---------------------------------------------------
 begin CW_HELICAL_ARC_MOVE
 
 "G2 [X][Y][Z][I][J] [FC]"
 
 +---------------------------------------------------
-|  Counterclockwise helical-arc move
++  Counterclockwise helical-arc move
 +---------------------------------------------------
 begin CCW_HELICAL_ARC_MOVE
 
@@ -211,7 +213,6 @@ begin TOOLCHANGE
 "M300 S560 P550"
 "M300 S260 P750"
 "G91"
-"G21"
 "G0 Z40"
 "G90"
 "G0 X0 Y0"
@@ -220,7 +221,7 @@ begin TOOLCHANGE
 "G91"
 "G0 Z-20"
 "G90"
-+ Set below XY to position of your Zero Plate (in mm)
++ Set below XY to position of probe your Zero Plate (in mm)
 "G0 X20 Y20"
 "M117 Connect probe"
 "M0 Connect probe"
@@ -234,7 +235,6 @@ begin TOOLCHANGE
 "M117 Remove probe"
 "M0 Remove probe"
 "G90"
-"G20"
 "G0 [ZH]"
 "G0 [XH][YH]"
 
