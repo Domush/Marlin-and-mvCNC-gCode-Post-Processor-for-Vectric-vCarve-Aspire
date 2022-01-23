@@ -206,30 +206,36 @@ begin TOOLCHANGE
 "M5"
 "M117 Change Bit: #[T]"
 
-"M300 S660 P350"
-"M300 S460 P350"
-"M300 S660 P350"
-"M300 S460 P350"
-"G53 G0 Z100"
-"G53 G0 X0 Y200"
+"G4 S3"
+"M300 S560 P550"
+"M300 S260 P750"
+"M300 S560 P550"
+"M300 S260 P750"
+"G91"
+"G0 Z40"
+"G90"
+"G0 X0 Y0"
+"M117 [TOOLNAME]"
 "M0 Bit: [TOOLNAME]"
-"G0 Z80"
-+ Set below XY to position to probe your Zero Plate (in mm)
+"G91"
+"G0 Z-20"
+"G90"
++ Set below XY to position of probe your Zero Plate (in mm)
 "G0 X20 Y20"
+"M117 Connect probe"
 "M0 Connect probe"
 "G91"
-"G38.2 Z-40 F200"
+"G38.2 Z-40 F300"
 "G0 Z3"
-"G38.2 Z-6 F100"
+"G38.2 Z-6 F150"
 + Set below Z to height of your Zero Plate (in mm)
 "G92 Z6.5"
 "G0 Z10"
+"M117 Remove probe"
 "M0 Remove probe"
 "G90"
-"G0 Z[SAFEZ]"
+"G0 [ZH]"
 "G0 [XH][YH]"
-
-
 
 +---------------------------------------------
 +  Dwell (momentary pause)
@@ -243,8 +249,9 @@ begin DWELL_MOVE
 +---------------------------------------------------------------------------
 begin FOOTER
 
-"M5"
-"M117 Returning home"
 "G0 [ZH]"
+"M5"
+"G4 S3"
+"M117 Returning home"
 "G0 [XH][YH]"
 "M117 Routing complete."
