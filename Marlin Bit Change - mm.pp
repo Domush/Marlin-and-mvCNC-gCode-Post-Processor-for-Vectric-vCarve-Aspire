@@ -16,7 +16,6 @@
 |                      Added G54 (CNC) coordinate support
 | EdwardW   10/26/2021
 |                      Added router control (M3/M5)
-|                      Removed tool change support because its unworkable
 | EdwardW   12/14/2021
 |                      Added helical-arc support
 |                      Changed to unix line endings
@@ -30,6 +29,9 @@
 |                      !!Be sure to edit bit change defaults for Zero Probe!
 |                      Zero Probe default Z-height: 6.5mm
 |                      Fixed metric file to correctly set to metric
+| EdwardW   1/25/2022
+|                      Added bit change prompt and "G38.2" Z-zero at start
+|                      Set "G92 X0 Y0" at start, so position CNC at X0Y0
 +===========================================================================
 
 POST_NAME = "Marlin w/Bit Change (mm) (*.gcode)"
@@ -112,12 +114,34 @@ begin HEADER
 "; Paths: [TOOLPATHS_OUTPUT]"
 "; Safe Z: [SAFEZ]mm"
 "; Generated on [DATE] [TIME] by [PRODUCT]"
-"G90"
-"G21"
-"M117 [YLENGTH]x[XLENGTH]x[ZMIN]mm  Bit #[T]"
-"M117 Load [TOOLNAME]"
-"M0 Load [TOOLNAME]"
+"M117 [YLENGTH]x[XLENGTH]x[ZMIN]mm"
 "G54"
+"G92 X0 Y0"
+"M300 S560 P550"
+"M300 S260 P750"
+"M300 S560 P550"
+"M300 S260 P750"
+"G91"
+"G21"
+"G0 Z50"
+"G90"
+"G0 X0 Y0"
+"M117 Insert [TOOLNAME] and *CONNECT PROBE*"
+"M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
+"G90"
++ Set below XY to position of your Zero Plate (in mm)
+"G0 X20 Y20"
+"G91"
+"G0 Z-30"
+"G38.2 Z-40 F300"
+"G0 Z3"
+"G38.2 Z-6 F150"
++ Set below Z to height of your Zero Plate (in mm)
+"G92 Z6.5"
+"G0 Z10"
+"M117 !!Remove probe!!"
+"M0 *REMOVE PROBE* before continuing"
+"G90"
 "G0 [ZH]"
 "G0 [XH][YH]"
 + Manually set spindle to 100% since I have no VFD. Otherwise use: M3 [S]
@@ -213,27 +237,25 @@ begin TOOLCHANGE
 "M300 S560 P550"
 "M300 S260 P750"
 "G91"
-"G0 Z40"
+"G21"
+"G0 Z50"
 "G90"
 "G0 X0 Y0"
-"M117 [TOOLNAME]"
-"M0 Bit: [TOOLNAME]"
-"G91"
-"G0 Z-20"
+"M117 Insert [TOOLNAME] and *CONNECT PROBE*"
+"M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
 "G90"
-+ Set below XY to position of probe your Zero Plate (in mm)
++ Set below XY to position of your Zero Plate (in mm)
 "G0 X20 Y20"
-"M117 Connect probe"
-"M0 Connect probe"
 "G91"
+"G0 Z-30"
 "G38.2 Z-40 F300"
 "G0 Z3"
 "G38.2 Z-6 F150"
 + Set below Z to height of your Zero Plate (in mm)
 "G92 Z6.5"
 "G0 Z10"
-"M117 Remove probe"
-"M0 Remove probe"
+"M117 !!Remove probe!!"
+"M0 *REMOVE PROBE* before continuing"
 "G90"
 "G0 [ZH]"
 "G0 [XH][YH]"
