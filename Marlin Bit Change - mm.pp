@@ -108,8 +108,8 @@ VAR DWELL_TIME = [DWELL|A|S|1.2]
 +---------------------------------------------------------------------------
 begin HEADER
 
-"; [TP_FILENAME]"
-"; Material size: [YLENGTH] x [XLENGTH] x [ZMIN]mm"
+"; Job name: [TP_FILENAME]"
+"; Job size: [YLENGTH] x [XLENGTH] x [ZMIN]mm"
 "; Tools: [TOOLS_USED]"
 "; Paths: [TOOLPATHS_OUTPUT]"
 "; Safe Z: [SAFEZ]mm"
@@ -126,7 +126,8 @@ begin HEADER
 "G0 Z50"
 "G90"
 "G0 X0 Y0"
-"M117 Insert [TOOLNAME] and *CONNECT PROBE*"
+"M117 Insert [TOOLNAME]"
+"M117 *CONNECT PROBE*"
 "M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
 "G90"
 + Set below XY to position of your Zero Plate (in mm)
@@ -135,10 +136,10 @@ begin HEADER
 "G0 Z-30"
 "G38.2 Z-40 F300"
 "G0 Z3"
-"G38.2 Z-6 F150"
+"G38.2 Z-5 F150"
 + Set below Z to height of your Zero Plate (in mm)
 "G92 Z6.5"
-"G0 Z10"
+"G0 Z20"
 "M117 !!Remove probe!!"
 "M0 *REMOVE PROBE* before continuing"
 "G90"
@@ -241,7 +242,8 @@ begin TOOLCHANGE
 "G0 Z50"
 "G90"
 "G0 X0 Y0"
-"M117 Insert [TOOLNAME] and *CONNECT PROBE*"
+"M117 Insert [TOOLNAME]"
+"M117 *CONNECT PROBE*"
 "M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
 "G90"
 + Set below XY to position of your Zero Plate (in mm)
