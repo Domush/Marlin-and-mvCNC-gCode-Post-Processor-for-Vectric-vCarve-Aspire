@@ -3,36 +3,6 @@
 | gCode - Vectric machine output post-processor for vCarve and Aspire
 |
 +===========================================================================
-|
-| History
-|
-| Who       When       What
-| ========  ========== =====================================================
-| EdwardW   01/13/2020 Initial authoring
-|                      Added status messages (M117)
-|                      Enabled Arc movements (G2/G3)
-|                      Added ending presentation
-| EdwardW   02/28/2020
-|                      Added G54 (CNC) coordinate support
-| EdwardW   10/26/2021
-|                      Added router control (M3/M5)
-| EdwardW   12/14/2021
-|                      Added helical-arc support
-|                      Changed to unix line endings
-|                      Improved comments
-|                      Increased plunge speed when above material
-|                      Now uses machine default rapid move speed
-|                      Disabled PLUNGE_RATE section to avoid slowdowns
-|                      Comments now report carved Z depth, not material Z
-| EdwardW   1/22/2022
-|                      Added manual bit change support
-|                      !!Be sure to edit bit change defaults for Zero Probe!
-|                      Zero Probe default Z-height: 6.5mm
-|                      Fixed metric file to correctly set to metric
-| EdwardW   1/25/2022
-|                      Added bit change prompt and "G38.2" Z-zero at start
-|                      Set "G92 X0 Y0" at start, so position CNC at X0Y0
-+===========================================================================
 
 POST_NAME = "Marlin w/Bit Change (inch) (*.gcode)"
 
@@ -47,7 +17,7 @@ UNITS = "inches"
 SPINDLE_SPEED_RANGE = 1 100 10000 27500
 
 + Replace all () with <> to avoid gCode interpretation errors
-SUBSTITUTE = "([91])[93]"
++ SUBSTITUTE = "([91])[93]"
 
 + Plunge moves to Plunge (Z2) height are rapid moves
 RAPID_PLUNGE_TO_STARTZ = "YES"
@@ -116,24 +86,20 @@ begin HEADER
 "; Generated on [DATE] [TIME] by [PRODUCT]"
 "M117 [YLENGTH]x[XLENGTH]x[ZMIN]in"
 "G54"
-"G92 X0 Y0"
+"G92 X0 Y0 Z0"
 "M300 S560 P550"
 "M300 S260 P750"
 "M300 S560 P550"
 "M300 S260 P750"
-"G91"
+"G90"
 "G21"
-"G0 Z50"
-"G90"
-"G0 X0 Y0"
+"G0 X50 Y300 Z90 F8000"
 "M117 Insert [TOOLNAME]"
-"M117 *CONNECT PROBE*"
-"M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
-"G90"
+"M117 !!CONNECT PROBE!!"
+"M0 Insert [TOOLNAME] and *CONNECT PROBE*"
 + Set below XY to position of your Zero Plate (in mm)
-"G0 X20 Y20"
+"G0 X20 Y20 Z30"
 "G91"
-"G0 Z-30"
 "G38.2 Z-40 F300"
 "G0 Z3"
 "G38.2 Z-5 F150"
@@ -141,11 +107,9 @@ begin HEADER
 "G92 Z6.5"
 "G0 Z20"
 "M117 !!Remove probe!!"
-"M0 *REMOVE PROBE* before continuing"
+"M0 *REMOVE PROBE*"
 "G90"
 "G20"
-"G0 [ZH]"
-"G0 [XH][YH]"
 + Manually set spindle to 100% since I have no VFD. Otherwise use: M3 [S]
 "M3 S100"
 ";==========================================================================="
@@ -238,31 +202,24 @@ begin TOOLCHANGE
 "M300 S260 P750"
 "M300 S560 P550"
 "M300 S260 P750"
-"G91"
 "G21"
-"G0 Z50"
-"G90"
-"G0 X0 Y0"
+"G0 X50 Y300 Z90"
 "M117 Insert [TOOLNAME]"
-"M117 *CONNECT PROBE*"
-"M0 Insert [TOOLNAME] and *CONNECT PROBE* before continuing"
-"G90"
+"M117 !!CONNECT PROBE!!"
+"M0 Insert [TOOLNAME] and *CONNECT PROBE*"
 + Set below XY to position of your Zero Plate (in mm)
-"G0 X20 Y20"
+"G0 X20 Y20 Z30"
 "G91"
-"G0 Z-30"
 "G38.2 Z-40 F300"
 "G0 Z3"
 "G38.2 Z-5 F150"
 + Set below Z to height of your Zero Plate (in mm)
 "G92 Z6.5"
-"G0 Z10"
+"G0 Z20"
 "M117 !!Remove probe!!"
-"M0 *REMOVE PROBE* before continuing"
+"M0 *REMOVE PROBE*"
 "G90"
 "G20"
-"G0 [ZH]"
-"G0 [XH][YH]"
 
 +---------------------------------------------
 +  Dwell (momentary pause)
@@ -276,9 +233,11 @@ begin DWELL_MOVE
 +---------------------------------------------------------------------------
 begin FOOTER
 
-"G0 [ZH]"
+"G0 Z2"
 "M117 Returning home"
 "M5"
 "G4 S3"
-"G0 [XH][YH]"
+"G53"
+"G0 X0 Y0 Z110"
+"G21"
 "M117 Routing complete."
