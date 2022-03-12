@@ -1,4 +1,4 @@
-# Marlin/mvCNC gCode Postprocessor
+# mvCNC and Marlin gCode Postprocessor
 ## For Vectric vCarve, Aspire 9, 9.5, 10, 10.5 and 11
  
 Turns your Aspire and v-carve sketches into gcode for mvCNC and Marlin 2.x CNC control boards. 
