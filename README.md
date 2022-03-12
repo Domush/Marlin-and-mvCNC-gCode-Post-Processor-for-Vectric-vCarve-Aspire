@@ -1,11 +1,11 @@
 # Marlin/mvCNC gCode Postprocessor
 ## For Vectric vCarve, Aspire 9, 9.5, 10, 10.5 and 11
  
-Turns your Aspire and v-carve sketches into gcode for Marlin 2.x CNC control boards. 
+Turns your Aspire and v-carve sketches into gcode for mvCNC and Marlin 2.x CNC control boards. 
  
 ## Features:
 - Both metric (mm) and imperial (inches) versions
-- gCode files are saved using a .gcode extension (the Marlin default)
+- gCode files are saved using a .gcode extension (the default extension)
 - In-line manual bit change support (separate bit change branch)
 
 ## Assumptions:
